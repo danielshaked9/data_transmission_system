@@ -146,8 +146,15 @@ re-configuration then requires the vendor tool or bridging M0/M1 to 3V3.
   `/dev/ttyUSB1` (edit the `PORT_A` / `PORT_B` constants to match your system).
 
 ```
- host ──USB── [CH340|LoRa] ))) chirp spread spectrum ((( [LoRa|CH340] ──USB── host
-   A          DX-LR02  #A          (long range, sub-GHz)        DX-LR02  #B          B
+  ┌────────────────┐                              ┌────────────────┐
+  │     Host A     │                              │     Host B     │
+  └────────┬───────┘                              └────────┬───────┘
+           │ USB · UART 8-N-1                              │ USB · UART 8-N-1
+           │ /dev/ttyUSB0                                  │ /dev/ttyUSB1
+  ┌────────┴───────┐    chirp spread spectrum     ┌────────┴───────┐
+  │   DX-LR02 #A   │   ))) ◀──────────────▶ (((   │   DX-LR02 #B   │
+  │   CH340+LoRa   │     sub-GHz · long range     │   CH340+LoRa   │
+  └────────────────┘                              └────────────────┘
 ```
 
 ## Running
