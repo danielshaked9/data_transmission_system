@@ -22,6 +22,12 @@ the reverse. LoRa (the modulation the DX-LR02 uses) encodes data as **cyclic
 shifts of a base chirp**: the starting frequency of the sweep selects one of
 `2^SF` symbols, where `SF` is the *spreading factor*.
 
+![Chirp symbols as cyclic frequency shifts](figures/chirp_symbols.png)
+
+*A base up-chirp sweeps linearly across the band; a data symbol is the same
+chirp shifted in frequency, wrapping modulo the bandwidth — the discontinuity's
+position encodes the symbol value.*
+
 This is the key to long range. Three properties fall out of it:
 
 - **Processing gain.** Each symbol is spread across the full bandwidth `BW` for
@@ -40,19 +46,22 @@ This is the key to long range. Three properties fall out of it:
   instantaneous frequency changes), so the transmitter's power amplifier runs at
   maximum efficiency — important on battery.
 
+![De-chirp and FFT pull the symbol out of the noise](figures/processing_gain.png)
+
+*Left: a symbol transmitted at −12 dB SNR is invisible in the raw received
+spectrum. Right: after de-chirping and an FFT, the spreading gain (~30 dB for
+SF 10) collapses all that energy into a single bin, well above the noise floor —
+this is why LoRa decodes signals you cannot even see.*
+
 The tradeoff is the classic spread-spectrum bargain: **range and reliability are
 bought with data rate.** A high spreading factor reaches farther but sends fewer
 bits per second. The DX-LR02 exposes this as its configurable *air rate*.
 
-```
-  up-chirp symbol            de-chirp + FFT at RX
-  freq                       energy
-   ^      /                   ^
-   |     /                    |        █   <- single sharp bin = the symbol
-   |    /                     |        █      (everything below noise floor
-   |   /                      |   . .  █ . .   collapses into this peak)
-   +----------> time          +-------------> frequency bin (= symbol value)
-```
+![Spreading factor trades data rate for sensitivity](figures/sf_tradeoff.png)
+
+*As the spreading factor rises, the data rate drops (roughly halving per step)
+while receiver sensitivity improves — buying range and link margin at the cost
+of throughput.*
 
 ---
 
